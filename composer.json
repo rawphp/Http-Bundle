@@ -1,0 +1,33 @@
+{
+    "name": "rawphp/http-bundle",
+    "description": "A symfony http bundle",
+    "minimum-stability": "dev",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tom Kaczocha",
+            "email": "tom@crazydev.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RawPHP\\HttpBundle\\": "src/"
+        }
+    },
+    "require": {
+        "symfony/symfony": "2.6.*",
+        "guzzlehttp/guzzle": "6.*",
+        "behat/behat": "^3.0",
+        "behat/symfony2-extension": "~2",
+        "rawphp/http": "dev-master"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "~2"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    }
+}

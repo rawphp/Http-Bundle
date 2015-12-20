@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="rawphp/sizzle" default="dev" basedir=".">
+
+    <property environment="test" />
+    <property file="build.properties" />
+
+    <target name="ci" depends="prepare,code-standards-ci,lint" description="Run automated tests" />
+    <target name="dev" depends="clean,prepare,code-standards,lint" description="Pre commit build check" />
+
+    <!-- PREPARE -->
+    <target name="prepare" depends="clean" description="Prepare for build">
+        <mkdir dir="build/api" />
+        <mkdir dir="build/code-browser" />
+        <mkdir dir="build/coverage" />
+        <mkdir dir="build/logs" />
+        <mkdir dir="build/pdepend" />
+        <mkdir dir="build/cache" />
+    </target>
+
+    <!-- CLEAN UP -->
+    <target name="clean" description="Cleanup build artifacts">
+        <delete dir="build/api" />
+        <delete dir="build/code-browser" />
+        <delete dir="build/coverage" />
+        <delete dir="build/logs" />
+        <delete dir="build/pdepend" />
+        <mkdir dir="build/cache" />
+    </target>
+
+    <!-- COMPOSER INSTALL -->
+    <target name="composer-ci" description="Load 3rd party dependencies for dev mode">
+        <delete dir="vendor" />
+        <exec executable="composer">
+            <arg value="install" />
+            <arg value="--dev" />
+            <arg value="--prefer-dist" />
+        </exec>
+    </target>
+
+    <target name="cs" depends="prepare,code-standards"/>
+
+    <target name="code-standards" description="Find coding standard violations, but report in format for C.I">
+        <exec executable="vendor/bin/phpcs.bat" failonerror="true">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=build/logs/checkstyle.xml" />
+            <arg value="--standard=phpcs.xml" />
+            <arg value="--extensions=php,inc" />
+            <arg path="src" />
+        </exec>
+    </target>
+
+    <target name="code-standards-ci" description="Find coding standard violations, but report in format for C.I">
+        <exec executable="vendor/bin/phpcs" output="/dev/null" failonerror="true">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=build/logs/checkstyle.xml" />
+            <arg value="--standard=phpcs.xml" />
+            <arg value="--extensions=php,inc" />
+            <arg path="src" />
+        </exec>
+    </target>
+
+    <target name="lint" description="Perform syntax check">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+            <fileset dir="src">
+                <include name="**/*.php" />
+                <modified update="false" />
+            </fileset>
+        </apply>
+    </target>
+
+</project>
