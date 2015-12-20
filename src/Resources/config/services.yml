@@ -1,10 +1,10 @@
 
 services:
-    raw_http.factory.client:
+    rawphp_http.factory.client:
         class: RawPHP\Http\Factory\ClientFactory
 
-    raw_http.factory.request:
+    rawphp_http.factory.request:
         class: RawPHP\Http\Factory\RequestFactory
 
-    raw_http.factory.response:
+    rawphp_http.factory.response:
         class: RawPHP\Http\Factory\ResponseFactory

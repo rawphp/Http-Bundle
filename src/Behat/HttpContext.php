@@ -12,7 +12,6 @@ use RawPHP\Http\Factory\IClientFactory;
 use RawPHP\Http\Handler\PredictedHandler;
 use RawPHP\Http\Util\RequestMap;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Class HttpContext
@@ -23,8 +22,6 @@ class HttpContext implements KernelAwareContext
 {
     use KernelDictionary;
 
-    /** @var  KernelInterface */
-    protected $kernel;
     /** @var  string */
     protected $resourcePath;
     /** @var  IClientFactory */
@@ -37,9 +34,9 @@ class HttpContext implements KernelAwareContext
      */
     public function init(ScenarioScope $scope)
     {
-        $this->resourcePath = $this->getContainer()->getParameter('sizzle_http.resources_dir');
+        $this->resourcePath = $this->getContainer()->getParameter('rawphp_http.resource_dir');
 
-        $this->clientFactory = $this->getContainer()->get('sizzle_http.factory.client');
+        $this->clientFactory = $this->getContainer()->get('rawphp_http.factory.client');
 
         $this->handler = new PredictedHandler();
 

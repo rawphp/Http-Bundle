@@ -24,6 +24,6 @@ class HttpExtension extends Extension
 
         $appDir = $container->getParameter('kernel.root_dir');
 
-        $container->setParameter('sizzle_http.resources_dir', $appDir . '/Features/Resources');
+        $container->setParameter('rawphp_http.resource_dir', $appDir . '/Features/Resources');
     }
 }
