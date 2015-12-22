@@ -2,12 +2,15 @@
 
 namespace RawPHP\HttpBundle\Behat;
 
+use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\ScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use InvalidArgumentException;
+use Psr\Http\Message\RequestInterface;
 use RawPHP\Http\Factory\IClientFactory;
 use RawPHP\Http\Handler\PredictedHandler;
 use RawPHP\Http\Util\RequestMap;
@@ -18,7 +21,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
  *
  * @package RawPHP\HttpBundle
  */
-class HttpContext implements KernelAwareContext
+class HttpContext implements Context, KernelAwareContext
 {
     use KernelDictionary;
 
@@ -39,8 +42,6 @@ class HttpContext implements KernelAwareContext
         $this->clientFactory = $this->getContainer()->get('rawphp_http.factory.client');
 
         $this->handler = new PredictedHandler();
-
-        $this->handler->setMatchers([]);
 
         $this->clientFactory->setHandler($this->handler);
     }
@@ -96,5 +97,34 @@ class HttpContext implements KernelAwareContext
 
             $this->handler->addRequestMap($map);
         }
+    }
+
+    /**
+     * @Given /^the following matchers exist:$/
+     */
+    public function theFollowingMatchersExist(TableNode $table)
+    {
+        foreach ($table->getHash() as $data) {
+            $name = $data['name'];
+            $class = $data['class'];
+            $method = $data['method'];
+
+            if (!class_exists($class)) {
+                throw new InvalidArgumentException(sprintf('Class "%s" not found', $class));
+            }
+
+            $object = new $class();
+
+            if (!method_exists($object, $method)) {
+                throw new InvalidArgumentException(sprintf('Method "%s" not found on "%s"', $method, $class));
+            }
+
+            $this->handler->addMatcher(
+                $name,
+                function (RequestInterface $request, array $maps) use ($object, $method) {
+                    return $object->$method($request, $maps);
+                }
+            );
+        };
     }
 }

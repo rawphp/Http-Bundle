@@ -25,5 +25,8 @@ class HttpExtension extends Extension
         $appDir = $container->getParameter('kernel.root_dir');
 
         $container->setParameter('rawphp_http.resource_dir', $appDir . '/Features/Resources');
+
+        $configuration = new Configuration();
+        $this->processConfiguration($configuration, $config);
     }
 }
